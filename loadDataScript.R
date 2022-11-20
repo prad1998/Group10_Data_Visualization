@@ -29,35 +29,43 @@ p
 
 # line chart
 
-toyota <- filter(cars, Car == "Toyota Corolla")
 
-us <- filter(cars, Origin == "US")
+corolla <- filter(cars, Car == "Toyota Corolla")
+
+corolla
+
+pinto <- filter(cars, Car == "Ford Pinto" )
+
+pinto 
+
+rabbit <- filter(cars, Car =="Volkswagen Rabbit")
+
+rabbit
 
 
-us
-pinto <- filter(cars, Car == "Ford Pinto")
 
-
-
-#pinto
-
-
-ggplot(us, aes(x=us$MPG, y=us$Model, group=1)) +
+ggplot(corolla, aes(x=corolla$MPG, y=corolla$Model, group=1)) +
   geom_line()+
   geom_point()
 
-
-
-ggplot(pinto, aes(x=pinto$Model, y=pinto$MPG, group=1)) +
+ggplot(pinto, aes(x=pinto$MPG, y=pinto$Model, group=1)) +
   geom_line()+
   geom_point()
 
+ggplot(rabbit, aes(x=rabbit$MPG, y=rabbit$Model, group=1)) +
+  geom_line()+
+  geom_point()
 
 p = ggplot() + 
-  geom_line(data = us, aes(x = Model, y = MPG, group=1), color = "blue") +
-  geom_line(data = pinto, aes(x = Model, y = MPG, group=1), color = "red") +
+  geom_line(data = corolla, aes(x = Model, y = MPG, group=1, color = "blue")) + 
+  geom_line(data = pinto, aes(x = Model, y = MPG, group=1, color= "yellow")) +
+  geom_line(data = rabbit, aes(x = Model, y = MPG, group=1, color = "brown")) +
+  ggtitle("The consumption of fuel changed over the years in each region")+
+  theme(plot.title = element_text(hjust = 0.5)) +
   xlab('Model') +
-  ylab('MPG')
+  ylab('MPG') + 
+ 
+  scale_x_continuous(breaks = seq(70, 82, by=3), limits=c(70,82))
 
 print(p)
 
