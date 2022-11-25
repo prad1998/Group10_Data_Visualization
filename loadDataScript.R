@@ -1,5 +1,6 @@
 library(readr)
 library(ggplot2)
+library(dplyr)
 
 cars <- read_csv("cars.csv")
 
@@ -20,4 +21,31 @@ mpgDf <- data.frame(mpgTable)
 histo <- ggplot(mpgDf, aes(x=mpgTable)) + 
   geom_bar()
 histo
+
+test <- data.frame(as.numeric(cars$MPG), cars$Origin)
+split <- split(test, f = test$cars.Origin)
+
+
+yeet <- cut(split$Europe$as.numeric.cars.MPG., breaks=c(0, 5, 10, 15, 20, 25, 30, 35, 40))
+yiit <- data.frame(yeet)
+yiit <- yiit %>%
+  mutate(Origin = "Europe")
+yiit
+yeet2 <- cut(split$Japan$as.numeric.cars.MPG., breaks=c(0, 5, 10, 15, 20, 25, 30, 35, 40))
+yiit2 <- data.frame(yeet2)
+yiit2 <- yiit2 %>%
+  mutate(Origin = "Japan")
+yeet3 <- cut(split$USA$as.numeric.cars.MPG., breaks=c(0, 5, 10, 15, 20, 25, 30, 35, 40))
+yiit3 <- data.frame(yeet3)
+yiit3 <- yiit3 %>%
+  mutate(Origin = "USA")
+
+colnames(yiit) <- c("yiit", "Origin")
+colnames(yiit2) <- c("yiit", "Origin")
+
+nest <- rbind(yiit, yiit2)
+
+stacked <- ggplot(data=nest, aes(x=yiit, y=1, fill=Origin)) +
+  geom_bar(stat="identity")
+stacked
 
