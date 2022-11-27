@@ -1,34 +1,3 @@
-#Libraries:
-library(readr) #Reader for csv.
-library(ggplot2) #GGplot for graphs
-
-#Reading Data
-cars <- read_csv("cars.csv")
-
-#Quick summary of data set
-summary(cars)
-
-#View Dataset raw data
-View(cars)
-
-#Variables
-Acceleration<-cars$Acceleration
-Fuel <- cars$MPG
-Horsepower<-cars$Horsepower
-
-#Plots using ggplot
-ggplot(data=cars, aes(x=Acceleration, y=Fuel)) + geom_point(size=1)
-ggplot(data=cars, aes(x=Acceleration, y=Horsepower)) + geom_point(size=1)
-
-originCount <- table(cars$Origin, dnn = "Origin")
-#barplot(originCount, main = "Origin")
-originDataFrame <- data.frame(originCount)
-colnames(originDataFrame) <- c("Origin", "Frequency")
-p <- ggplot(data=originDataFrame, aes(x=Frequency, y=Origin)) + 
-  geom_bar(stat="identity")
-p
-
-
 ######## Boxplot 
 
 library(readr) 
@@ -49,20 +18,92 @@ ggplot(cars, aes(x=as.factor(Origin), y=MPG)) +
   xlab("Origin")
 
 
-#animated grouped boxplots for region that have Year as state   
-ggplot(cars, aes(factor(Origin), MPG)) + 
-  geom_boxplot(fill="slateblue", alpha=0.2) + 
-  # The gganimate code
-  transition_states(
-    Model,  
-    transition_length = 20,
-    state_length = 1
-  ) + labs(title = "Year: 19{closest_state}")  +
+
+
+library(shinydashboard)
+library(shiny)
+
+
+ui <- dashboardPage(
+  dashboardHeader(title = "Dashboard of cars eller noget"),
+  dashboardSidebar(disable = TRUE),
+  dashboardBody(
+    # Boxes need to be put in a row (or column)
   
-  # Used to control the non-persistent data during a tween  
-  enter_fade() + 
-  exit_shrink()
+                box(
+                  title = "Statisk Box Plot for sjov",
+                  plotOutput("plot_box")
+                ),
+                
+                box(
+                  title = "Animated Box plot",
+                  imageOutput("plot_boxs", height = "100%", width = "100%")
+                ),
+                
+                box(
+                  title = "Histogram",
+                  imageOutput("Histogram_plot", height = "100%", width = "100%")
+                ),
+                
+                box(
+                  title = "Scatterplot",
+                  imageOutput("Scatterplot_plot", height = "100%", width = "100%")
+                )
+
+  )
+)
+server <- function(input, output) {
   
+  outfile <- tempfile(fileext='.gif')
+  
+
+  output$plot_box <- renderPlot({ggplot(cars, aes(x=as.factor(Origin), y=MPG)) + 
+    geom_boxplot(fill="slateblue", alpha=0.2) + 
+    xlab("Origin")})
+  
+  
+  output$Histogram_plot <- 
+  
+  #animated grouped boxplots for region that have Year as state   
+  output$plot_boxs <- renderImage(
+    {
+    
+     boxplottest <- ggplot(cars, aes(factor(Origin), MPG)) + 
+    geom_boxplot(fill="slateblue", alpha=0.2)
+  
+    anim <- boxplottest +  
+      # The gganimate code
+      transition_states(
+        Model,  
+        transition_length = 20,
+        state_length = 1
+      ) + labs(title = "Year: 19{closest_state}")  +
+      
+      # Used to control the non-persistent data during a tween  
+      enter_fade() + 
+      exit_shrink()
+  
+    anim_save("outfile.gif", animate(anim))  
+    list(src = "outfile.gif", contentType = "image/gif")
+    
+    }, deleteFile = TRUE
+    
+    )
+  
+}
+shinyApp(ui, server)
+
+
+  
+
+
+
+
+
+
+
+
+
 
 
 
