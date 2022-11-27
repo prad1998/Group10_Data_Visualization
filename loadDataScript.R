@@ -4,6 +4,7 @@ library(readr)
 library(ggplot2) 
 library(dplyr)
 library(gganimate)
+library(ggpubr)
 
 
 #Reading Data
@@ -88,12 +89,23 @@ server <- function(input, output) {
   nest <- rbind(yiit, yiit2)
   nest <- rbind(nest, yiit3)
   
+  
+  
+  #Correlation between MPG and Weight
+  output$Scatterplot_plot <- renderPlot({ggplot(data=cars, aes(x=MilesPerGallon, y=Weight)) + geom_point() + 
+      geom_smooth(method = lm) +
+      stat_regline_equation(label.y = 1000, aes(label = ..eq.label..)) + 
+      stat_regline_equation(label.y = 800, aes(label = ..rr.label..))})
+  
+
+  
+  
 
   output$Histogram_plot <- renderPlot({ggplot(data=nest, aes(x=yiit, y=1, fill=Origin)) +
       geom_bar(stat="identity")})
   
   
-  
+
   
   
   
