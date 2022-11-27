@@ -20,8 +20,22 @@ Weight<-cars$Weight
 Displacement<-cars$Displacement
 Cylinders<-cars$Cylinders
 
+#Function to plot
+ggPlotFunction <- function(xValue, yValue) {
+  ggplot(data=cars, aes(x=xValue, y=yValue)) + geom_point() +
+    geom_smooth(method = lm) +
+    stat_regline_equation(aes(label = ..eq.label..)) +  
+    stat_regline_equation(aes(label = ..rr.label..))
+}
+
 #Plots using ggplot
 #Correlation between Acceleration and MPG
+ggPlotFunction(Acceleration, MilesPerGallon)
+ggPlotFunction(Horsepower, MilesPerGallon)
+ggPlotFunction(Cylinders, MilesPerGallon)
+ggPlotFunction(Weight, MilesPerGallon)
+ggPlotFunction(Displacement, MilesPerGallon)
+
 ggplot(data=cars, aes(x=Acceleration, y=MilesPerGallon)) + geom_point() +
 geom_smooth(method = lm) +
   stat_regline_equation(label.y = 60, aes(label = ..eq.label..)) +  
