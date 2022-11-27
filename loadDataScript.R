@@ -25,8 +25,11 @@ library(shiny)
 
 
 ui <- dashboardPage(
-  dashboardHeader(title = "Dashboard of cars eller noget"),
+  dashboardHeader(title = "Dashboard of cars eller noget" ),
   dashboardSidebar(disable = TRUE),
+
+  
+  skin = "purple",
   dashboardBody(
     # Boxes need to be put in a row (or column)
   
@@ -42,14 +45,15 @@ ui <- dashboardPage(
                 
                 box(
                   title = "Histogram",
-                  imageOutput("Histogram_plot", height = "100%", width = "100%")
+                  imageOutput("Histogram_plot")
                 ),
                 
                 box(
                   title = "Scatterplot",
-                  imageOutput("Scatterplot_plot", height = "100%", width = "100%")
+                  imageOutput("Scatterplot_plot")
                 )
 
+                ,tags$footer("A color for our footer that we should decide")
   )
 )
 server <- function(input, output) {
@@ -62,7 +66,40 @@ server <- function(input, output) {
     xlab("Origin")})
   
   
-  output$Histogram_plot <- 
+  
+  yeet <- cut(split$Europe$as.numeric.cars.MPG., breaks=c(0, 5, 10, 15, 20, 25, 30, 35, 40))
+  yiit <- data.frame(yeet)
+  yiit <- yiit %>%
+    mutate(Origin = "Europe")
+  yiit
+  yeet2 <- cut(split$Japan$as.numeric.cars.MPG., breaks=c(0, 5, 10, 15, 20, 25, 30, 35, 40))
+  yiit2 <- data.frame(yeet2)
+  yiit2 <- yiit2 %>%
+    mutate(Origin = "Japan")
+  yeet3 <- cut(split$US$as.numeric.cars.MPG., breaks=c(0, 5, 10, 15, 20, 25, 30, 35, 40))
+  yiit3 <- data.frame(yeet3)
+  yiit3 <- yiit3 %>%
+    mutate(Origin = "USA")
+  
+  colnames(yiit) <- c("yiit", "Origin")
+  colnames(yiit2) <- c("yiit", "Origin")
+  colnames(yiit3) <- c("yiit", "Origin")
+  
+  nest <- rbind(yiit, yiit2)
+  nest <- rbind(nest, yiit3)
+  
+
+  output$Histogram_plot <- renderPlot({ggplot(data=nest, aes(x=yiit, y=1, fill=Origin)) +
+      geom_bar(stat="identity")})
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   #animated grouped boxplots for region that have Year as state   
   output$plot_boxs <- renderImage(
