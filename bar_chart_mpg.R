@@ -1,6 +1,7 @@
 library(readr) #Reader for csv.
 library(ggplot2) #GGplot for graphs
 library(dplyr)
+library(rcartocolor)
 
 #Reading Data
 cars <- read_csv("cars.csv")
@@ -40,13 +41,18 @@ yiit3 <- data.frame(yeet3)
 yiit3 <- yiit3 %>%
   mutate(Origin = "USA")
 
-colnames(yiit) <- c("yiit", "Origin")
-colnames(yiit2) <- c("yiit", "Origin")
-colnames(yiit3) <- c("yiit", "Origin")
+colnames(yiit) <- c("MPG", "Origin")
+colnames(yiit2) <- c("MPG", "Origin")
+colnames(yiit3) <- c("MPG", "Origin")
 
 nest <- rbind(yiit, yiit2)
 nest <- rbind(nest, yiit3)
 
+cbbPalette <- carto_pal(4, "ag_GrnYl")
+
 stacked <- ggplot(data=nest, aes(x=yiit, y=1, fill=Origin)) +
-  geom_bar(stat="identity")
+  geom_bar(stat="identity")+
+  scale_fill_manual(values=cbbPalette)
+stacked <- stacked + labs(title = "MPG Distribution", x = "MPG", y = "Samples")
 stacked
+  
