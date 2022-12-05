@@ -49,11 +49,12 @@ colnames(yiit3) <- c("MPG", "Origin")
 nest <- rbind(yiit, yiit2)
 nest <- rbind(nest, yiit3)
 
-cbbPalette <- carto_pal(4, "ag_GrnYl")
+cbbPalette <- carto_pal(4, "Vivid")
 
 cbbPalette
 stacked <- ggplot(data=nest, aes(x=MPG, y=1, fill=Origin)) +
   geom_bar(stat="identity") +
   scale_fill_manual(values=cbbPalette)
-stacked <- stacked + labs(title = "MPG Distribution", x = "MPG", y = "Samples")
+stacked <- stacked + labs(title = "MPG Distribution", x = "MilesPerGallon", y = "Samples")
 stacked
+
