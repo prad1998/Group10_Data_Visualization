@@ -50,9 +50,10 @@ nest <- rbind(yiit, yiit2)
 nest <- rbind(nest, yiit3)
 
 cbbPalette <- carto_pal(4, "ag_GrnYl")
+
+cbbPalette
 stacked <- ggplot(data=nest, aes(x=MPG, y=1, fill=Origin)) +
   geom_bar(stat="identity") +
   scale_fill_manual(values=cbbPalette)
 stacked <- stacked + labs(title = "MPG Distribution", x = "MPG", y = "Samples")
 stacked
-ggplotly(stacked)  
