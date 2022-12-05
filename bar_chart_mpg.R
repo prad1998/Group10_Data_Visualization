@@ -2,6 +2,7 @@ library(readr) #Reader for csv.
 library(ggplot2) #GGplot for graphs
 library(dplyr)
 library(rcartocolor)
+library(plotly)
 
 #Reading Data
 cars <- read_csv("cars.csv")
@@ -49,10 +50,9 @@ nest <- rbind(yiit, yiit2)
 nest <- rbind(nest, yiit3)
 
 cbbPalette <- carto_pal(4, "ag_GrnYl")
-
-stacked <- ggplot(data=nest, aes(x=yiit, y=1, fill=Origin)) +
-  geom_bar(stat="identity")+
+stacked <- ggplot(data=nest, aes(x=MPG, y=1, fill=Origin)) +
+  geom_bar(stat="identity") +
   scale_fill_manual(values=cbbPalette)
 stacked <- stacked + labs(title = "MPG Distribution", x = "MPG", y = "Samples")
 stacked
-  
+ggplotly(stacked)  
