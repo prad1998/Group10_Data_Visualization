@@ -2,6 +2,7 @@
 library(readr) #Reader for csv.
 library(ggplot2) #GGplot for graphs
 library(ggpubr) #Regression and R^2
+library(plotly) 
 
 #Reading Data
 cars <- read_csv("cars.csv")
@@ -13,6 +14,7 @@ summary(cars)
 View(cars)
 
 #Variables
+Car<-cars$Car
 Acceleration<-cars$Acceleration
 MilesPerGallon <- cars$MPG
 Horsepower<-cars$Horsepower
@@ -37,31 +39,27 @@ ggPlotFunction(Weight, MilesPerGallon)
 ggPlotFunction(Displacement, MilesPerGallon)
 
 #Correlation between Acceleration and MPG
-ggplot(data=cars, aes(x=MilesPerGallon, y=Acceleration)) + geom_point() +
-geom_smooth(method = lm) +
-  stat_regline_equation(label.y = 35, aes(label = ..eq.label..)) +  
-  stat_regline_equation(label.y = 30, aes(label = ..rr.label..))
+p1<- ggplot(data=cars, aes(x=MilesPerGallon, y=Acceleration)) + geom_point(aes(key=Car)) +
+geom_smooth(method = lm) 
+
 
 #Correlation between MPG and Horsepower
-ggplot(data=cars, aes(x=MilesPerGallon, y=Horsepower)) + geom_point() + 
-  geom_smooth(method = lm) +
-  stat_regline_equation(label.y = 70, aes(label = ..eq.label..)) + 
-  stat_regline_equation(label.y = 50, aes(label = ..rr.label..))
+p2<- ggplot(data=cars, aes(x=MilesPerGallon, y=Horsepower)) + geom_point(aes(key=Car)) + 
+  geom_smooth(method = lm) 
 
 #Correlation between MPG and Cylinders
-ggplot(data=cars, aes(x=MilesPerGallon, y=Cylinders)) + geom_point() + 
-  geom_smooth(method = lm) +
-  stat_regline_equation(label.y = 17, aes(label = ..eq.label..)) + 
-  stat_regline_equation(label.y = 15, aes(label = ..rr.label..))
-
+p3<- ggplot(data=cars, aes(x=MilesPerGallon, y=Cylinders)) + geom_point(aes(key=Car)) + 
+  geom_smooth(method = lm) 
 #Correlation between MPG and Weight
-ggplot(data=cars, aes(x=MilesPerGallon, y=Weight)) + geom_point() + 
-  geom_smooth(method = lm) +
-  stat_regline_equation(label.y = 1000, aes(label = ..eq.label..)) + 
-  stat_regline_equation(label.y = 800, aes(label = ..rr.label..))
+p4<- ggplot(data=cars, aes(x=MilesPerGallon, y=Weight)) + geom_point(aes(key=Car)) + 
+  geom_smooth(method = lm) 
 
 #Correlation between MPG and Displacement
-ggplot(data=cars, aes(x=MilesPerGallon, y=Displacement)) + geom_point() + 
-  geom_smooth(method = lm) +
-  stat_regline_equation(label.y = 750, aes(label = ..eq.label..)) + 
-  stat_regline_equation(label.y = 700, aes(label = ..rr.label..))
+p5<- ggplot(data=cars, aes(x=MilesPerGallon, y=Displacement)) + geom_point(aes(key=Car)) + 
+  geom_smooth(method = lm) 
+
+ggplotly(p1)
+ggplotly(p2)
+ggplotly(p3)
+ggplotly(p4)
+ggplotly(p5)
