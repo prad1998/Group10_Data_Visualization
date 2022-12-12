@@ -5,7 +5,8 @@ library(ggplot2)
 library(dplyr)
 library(gganimate)
 library(ggpubr)
-
+library(plotly) 
+library(rcartocolor)
 
 #Reading Data
 cars <- read_csv("cars.csv")
@@ -15,14 +16,42 @@ amc <- filter(cars, Car == "AMC Matador")
 #static grouped boxplots for region  
 
 ggplot(cars, aes(x=as.factor(Origin), y=MPG)) + 
-  geom_boxplot(fill="slateblue", alpha=0.2) + 
+  geom_boxplot(fill="#245668", alpha=0.2) + 
   xlab("Origin")
+
+
+#Variables
+Car<-cars$Car
+Origin<-cars$Origin
+Acceleration<-cars$Acceleration
+MilesPerGallon <- cars$MPG
+Horsepower<-cars$Horsepower
+Weight<-cars$Weight
+Displacement<-cars$Displacement
+Cylinders<-cars$Cylinders
+
+
+
+  
 
 
 
 
 library(shinydashboard)
 library(shiny)
+
+
+
+Scatterplot_plot <- function(xval, yval) {
+  xLabel<-rlang::as_label(rlang::ensym(xval))
+  yLabel<-rlang::as_label(rlang::ensym(yval))
+  p<- ggplot(data=cars, aes(x=xval, y=yval, col=Origin)) + geom_point(aes(key=Car)) + 
+    geom_smooth(method = lm) 
+  cbbPalette <- carto_pal(4, "ag_Sunset")
+  p<-p + scale_color_manual(values=col)
+  p<-p + labs(x = xLabel, y = yLabel)
+  ggplotly(p)
+}   
 
 
 ui <- dashboardPage(
@@ -35,23 +64,23 @@ ui <- dashboardPage(
     # Boxes need to be put in a row (or column)
   
                 box(
-                  title = "Statisk Box Plot for sjov",
+                  title = "Static Boxplot: Correlation between MPG and Origin ",
                   plotOutput("plot_box")
                 ),
                 
                 box(
-                  title = "Animated Box plot",
+                  title = "Animated Box plot: Correlation between MPG and Origin over years",
                   imageOutput("plot_boxs", height = "100%", width = "100%")
                 ),
                 
                 box(
-                  title = "Histogram",
+                  title = "Histogram: ",
                   imageOutput("Histogram_plot")
                 ),
                 
                 box(
-                  title = "Scatterplot",
-                  imageOutput("Scatterplot_plot")
+                  title = "Scatterplot: Correlation between MPG and Weight",
+                  plotlyOutput("Scatterplot_plot")
                 )
 
                 ,tags$footer("A color for our footer that we should decide")
@@ -62,10 +91,25 @@ server <- function(input, output) {
   outfile <- tempfile(fileext='.gif')
   
 
-  output$plot_box <- renderPlot({ggplot(cars, aes(x=as.factor(Origin), y=MPG)) + 
-    geom_boxplot(fill="slateblue", alpha=0.2) + 
+  output$plot_box <- renderPlot({ggplot(cars, aes(x=as.factor(Origin), y=MPG, fill=Origin)) + 
+    geom_boxplot(alpha=0.2) +
+    scale_fill_manual(values=c("#4b2991", "#c0369d", "#fa7876")) + 
     xlab("Origin")})
   
+  
+  
+  mpgTable <- as.numeric(cars$MPG)
+  mpgTable
+  mpgTable <- cut(mpgTable, breaks=c(0, 5, 10, 15, 20, 25, 30, 35, 40))
+  
+  mpgDf <- data.frame(mpgTable)
+  
+  histo <- ggplot(mpgDf, aes(x=mpgTable)) + 
+    geom_bar()
+  
+  
+  test <- data.frame(as.numeric(cars$MPG), cars$Origin)
+  split <- split(test, f = test$cars.Origin)
   
   
   yeet <- cut(split$Europe$as.numeric.cars.MPG., breaks=c(0, 5, 10, 15, 20, 25, 30, 35, 40))
@@ -89,37 +133,38 @@ server <- function(input, output) {
   nest <- rbind(yiit, yiit2)
   nest <- rbind(nest, yiit3)
   
+  cbbPalette <- cbbPalette <- carto_pal(4, "ag_Sunset")
   
   
-  #Correlation between MPG and Weight
-  output$Scatterplot_plot <- renderPlot({ggplot(data=cars, aes(x=MilesPerGallon, y=Weight)) + geom_point() + 
-      geom_smooth(method = lm) +
-      stat_regline_equation(label.y = 1000, aes(label = ..eq.label..)) + 
-      stat_regline_equation(label.y = 800, aes(label = ..rr.label..))})
+  # MPG eller mpgtable? 
+  stacked <- ggplot(data=nest, aes(x=mpgTable, y=1, fill=Origin)) +
+    geom_bar(stat="identity") +
+    scale_fill_manual(values=cbbPalette)
+  stacked <- stacked + labs(title = "MPG Distribution", x = "MilesPerGallon", y = "Samples")
+  
+  output$Histogram_plot <- renderPlot({ggplotly(Scatterplot_plot)})
+  
+  
+  
+ 
+  
+  
+  
+  #Function to plot
+  output$Scatterplot_plot <-  renderPlotly({ Scatterplot_plot  })    
+  
   
 
-  
-  
-
-  output$Histogram_plot <- renderPlot({ggplot(data=nest, aes(x=yiit, y=1, fill=Origin)) +
-      geom_bar(stat="identity")})
-  
-  
-
-  
-  
-  
-  
-  
-  
-  
   #animated grouped boxplots for region that have Year as state   
   output$plot_boxs <- renderImage(
     {
     
-     boxplottest <- ggplot(cars, aes(factor(Origin), MPG)) + 
-    geom_boxplot(fill="slateblue", alpha=0.2)
+     boxplottest <- ggplot(cars, aes(factor(Origin), MPG,  fill=Origin)) + 
+    geom_boxplot(alpha=0.2) +
+    scale_fill_manual(values=c("#4b2991", "#c0369d", "#fa7876"))
+       
   
+     
     anim <- boxplottest +  
       # The gganimate code
       transition_states(
