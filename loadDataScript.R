@@ -144,7 +144,6 @@ server <- function(input, output) {
       Scatterplot_plot<-Scatterplot_plot + scale_color_manual(values=col) 
       ggplotly(Scatterplot_plot)
       output$Scatterplot_plot <-  renderPlotly({ Scatterplot_plot})
-      
     } else if(input$Variable == "Cylinders"){
       Scatterplot_plot<-ggplot(data=cars, aes(x=MilesPerGallon, y=Cylinders, col=Origin)) + 
         geom_point(aes(key=Car)) + 
@@ -173,6 +172,7 @@ server <- function(input, output) {
       output$Scatterplot_plot <-  renderPlotly({ Scatterplot_plot})
       
     }
+    ""
   }
 
   #animated grouped boxplots for region that have Year as state   
