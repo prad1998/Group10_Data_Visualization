@@ -49,7 +49,7 @@ colnames(yiit3) <- c("MPG", "Origin")
 nest <- rbind(yiit, yiit2)
 nest <- rbind(nest, yiit3)
 
-cbbPalette <- carto_pal(4, "Vivid")
+cbbPalette <- carto_pal(4, "ag_Sunset")
 
 cbbPalette
 stacked <- ggplot(data=nest, aes(x=MPG, y=1, fill=Origin)) +
