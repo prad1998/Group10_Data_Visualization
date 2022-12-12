@@ -143,11 +143,11 @@ server <- function(input, output) {
     geom_point(aes(key=Car)) + 
     geom_smooth(method = lm)+ 
     scale_fill_manual(values=cbbPalette)
-  cbbPalette<-carto_pal(4, "ag_Sunset")
-  p<-p + scale_color_manual(values=col) 
+  col<-carto_pal(4, "ag_Sunset")
+  Scatterplot_plot<-Scatterplot_plot + scale_color_manual(values=col) 
   
   #p<-p + labs(x = Acceleration, y = Cylinders)
-  ggplotly(p)
+  ggplotly(Scatterplot_plot)
   
   
   
