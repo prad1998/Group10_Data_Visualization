@@ -41,17 +41,7 @@ library(shinydashboard)
 library(shiny)
 
 
-
-Scatterplot_plot <- function(xval, yval) {
-  xLabel<-rlang::as_label(rlang::ensym(xval))
-  yLabel<-rlang::as_label(rlang::ensym(yval))
-  p<- ggplot(data=cars, aes(x=xval, y=yval, col=Origin)) + geom_point(aes(key=Car)) + 
-    geom_smooth(method = lm) 
-  cbbPalette <- carto_pal(4, "ag_Sunset")
-  p<-p + scale_color_manual(values=col)
-  p<-p + labs(x = xLabel, y = yLabel)
-  ggplotly(p)
-}   
+ 
 
 
 ui <- dashboardPage(
@@ -142,16 +132,27 @@ server <- function(input, output) {
     scale_fill_manual(values=cbbPalette)
   stacked <- stacked + labs(title = "MPG Distribution", x = "MilesPerGallon", y = "Samples")
   
-  output$Histogram_plot <- renderPlot({ggplotly(Scatterplot_plot)})
+  output$Histogram_plot <- renderPlot({stacked})
   
   
   
  
   
   
+  Scatterplot_plot<-ggplot(data=cars, aes(x=Acceleration, y=Cylinders, col=Origin)) + 
+    geom_point(aes(key=Car)) + 
+    geom_smooth(method = lm)+ 
+    scale_fill_manual(values=cbbPalette)
+  cbbPalette<-carto_pal(4, "ag_Sunset")
+  p<-p + scale_color_manual(values=col) 
+  
+  #p<-p + labs(x = Acceleration, y = Cylinders)
+  ggplotly(p)
+  
+  
   
   #Function to plot
-  output$Scatterplot_plot <-  renderPlotly({ Scatterplot_plot  })    
+  output$Scatterplot_plot <-  renderPlotly({ Scatterplot_plot})    
   
   
 
