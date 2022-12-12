@@ -1,5 +1,6 @@
 ######## Boxplot 
-
+library(shinydashboard)
+library(shiny)
 library(readr) 
 library(ggplot2) 
 library(dplyr)
@@ -7,6 +8,7 @@ library(gganimate)
 library(ggpubr)
 library(plotly) 
 library(rcartocolor)
+library(gifski)
 
 #Reading Data
 cars <- read_csv("cars.csv")
@@ -30,24 +32,9 @@ Weight<-cars$Weight
 Displacement<-cars$Displacement
 Cylinders<-cars$Cylinders
 
-
-
-  
-
-
-
-
-library(shinydashboard)
-library(shiny)
-
-
- 
-
-
 ui <- dashboardPage(
   dashboardHeader(title = "Dashboard of cars eller noget" ),
   dashboardSidebar(disable = TRUE),
-
   
   skin = "purple",
   dashboardBody(
@@ -68,12 +55,17 @@ ui <- dashboardPage(
                   imageOutput("Histogram_plot")
                 ),
                 
+                selectInput("Variable", "Select what correlation to examine:",
+                            list(`Variables` = list("Acceleration", "Horsepower", "Cylinders", "Weight", "Displacement"))
+                ),
+                textOutput("selectedVariable"),
+                
                 box(
-                  title = "Scatterplot: Correlation between MPG and Weight",
+                  title = "Scatterplot: Correlation with MPG",
                   plotlyOutput("Scatterplot_plot")
                 )
 
-                ,tags$footer("A color for our footer that we should decide")
+                ,tags$footer("A color for our footer that we should decide"), 
   )
 )
 server <- function(input, output) {
@@ -134,32 +126,58 @@ server <- function(input, output) {
   
   output$Histogram_plot <- renderPlot({stacked})
   
-  
-  
- 
-  
-  
-  Scatterplot_plot<-ggplot(data=cars, aes(x=Acceleration, y=Cylinders, col=Origin)) + 
-    geom_point(aes(key=Car)) + 
-    geom_smooth(method = lm)+ 
-    scale_fill_manual(values=cbbPalette)
-  col<-carto_pal(4, "ag_Sunset")
-  Scatterplot_plot<-Scatterplot_plot + scale_color_manual(values=col) 
-  
-  #p<-p + labs(x = Acceleration, y = Cylinders)
-  ggplotly(Scatterplot_plot)
-  
-  
-  
-  #Function to plot
-  output$Scatterplot_plot <-  renderPlotly({ Scatterplot_plot})    
-  
-  
+  output$selectedVariable <- function(){
+    if(input$Variable == "Acceleration"){
+      Scatterplot_plot<-ggplot(data=cars, aes(x=MilesPerGallon, y=Acceleration, col=Origin)) + 
+        geom_point(aes(key=Car)) + 
+        geom_smooth(method = lm)
+      col<-carto_pal(4, "ag_Sunset")
+      Scatterplot_plot<-Scatterplot_plot + scale_color_manual(values=col) 
+      ggplotly(Scatterplot_plot)
+      output$Scatterplot_plot<-renderPlotly({ Scatterplot_plot})
+      
+    } else if (input$Variable == "Horsepower"){
+      Scatterplot_plot<-ggplot(data=cars, aes(x=MilesPerGallon, y=Horsepower, col=Origin)) + 
+        geom_point(aes(key=Car)) + 
+        geom_smooth(method = lm)
+      col<-carto_pal(4, "ag_Sunset")
+      Scatterplot_plot<-Scatterplot_plot + scale_color_manual(values=col) 
+      ggplotly(Scatterplot_plot)
+      output$Scatterplot_plot <-  renderPlotly({ Scatterplot_plot})
+      
+    } else if(input$Variable == "Cylinders"){
+      Scatterplot_plot<-ggplot(data=cars, aes(x=MilesPerGallon, y=Cylinders, col=Origin)) + 
+        geom_point(aes(key=Car)) + 
+        geom_smooth(method = lm)
+      col<-carto_pal(4, "ag_Sunset")
+      Scatterplot_plot<-Scatterplot_plot + scale_color_manual(values=col) 
+      ggplotly(Scatterplot_plot)
+      output$Scatterplot_plot<-renderPlotly({ Scatterplot_plot})
+      
+    } else if(input$Variable == "Weight"){
+      Scatterplot_plot<-ggplot(data=cars, aes(x=MilesPerGallon, y=Weight, col=Origin)) + 
+        geom_point(aes(key=Car)) + 
+        geom_smooth(method = lm)
+      col<-carto_pal(4, "ag_Sunset")
+      Scatterplot_plot<-Scatterplot_plot + scale_color_manual(values=col) 
+      ggplotly(Scatterplot_plot)
+      output$Scatterplot_plot <-  renderPlotly({ Scatterplot_plot})
+      
+    } else if(input$Variable == "Displacement"){
+      Scatterplot_plot<-ggplot(data=cars, aes(x=MilesPerGallon, y=Displacement, col=Origin)) + 
+        geom_point(aes(key=Car)) + 
+        geom_smooth(method = lm)
+      col<-carto_pal(4, "ag_Sunset")
+      Scatterplot_plot<-Scatterplot_plot + scale_color_manual(values=col) 
+      ggplotly(Scatterplot_plot)
+      output$Scatterplot_plot <-  renderPlotly({ Scatterplot_plot})
+      
+    }
+  }
 
   #animated grouped boxplots for region that have Year as state   
   output$plot_boxs <- renderImage(
     {
-    
      boxplottest <- ggplot(cars, aes(factor(Origin), MPG,  fill=Origin)) + 
     geom_boxplot(alpha=0.2) +
     scale_fill_manual(values=c("#4b2991", "#c0369d", "#fa7876"))
